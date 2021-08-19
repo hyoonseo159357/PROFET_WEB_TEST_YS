@@ -53,9 +53,8 @@ def lambda_handler(event, context):
         for feature in value:
             test_x["&".join(value)] += test_x[feature]
         test_x.drop(value, axis=1, inplace=True)
-     
 		for i in pred_instances: 
-				globals()['result_{}'.format(i)] = median_ensemble(test_x, BATCH_LATENCY, ANCHOR_INSTANCE, PRED_INSTANCES)
+            globals()['result_{}'.format(i)] = median_ensemble(test_x, BATCH_LATENCY, ANCHOR_INSTANCE, PRED_INSTANCES)
 		 
 	pred_latency = []
 	pred_instance = []
