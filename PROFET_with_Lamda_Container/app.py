@@ -13,11 +13,11 @@ def median_ensemble(test_x, anchor_latency, anchor_instance, pred_instance):
 		
     # Load model & Predict
     if not (anchor_latency == 0):
-            model_linear = pickle.load(open(f'/var/task/PROFET_Web_ys/DL_Model/{anchor_name}_{pred_name}_model_simple.bin', 'rb')) 
-    linear_pred = model_linear.predict(np.array(anchor_latency).reshape(-1, 1)).reshape(-1, 1	
-    model_rfr = pickle.load(open(f'/var/task/PROFET_Web_ys/DL_Model/{anchor_name}_{pred_name}_model_rfr.bin', 'rb')) 
+        model_linear = pickle.load(open(f'/var/task/PROFET_WEB_TEST_YS/DL_Model/{anchor_name}_{pred_name}_model_simple.bin', 'rb')) 
+        linear_pred = model_linear.predict(np.array(anchor_latency).reshape(-1, 1)).reshape(-1, 1)	
+    model_rfr = pickle.load(open(f'/var/task/PROFET_WEB_TEST_YS/DL_Model/{anchor_name}_{pred_name}_model_rfr.bin', 'rb')) 
     rfr_pred = model_rfr.predict(test_x).reshape(-1, 1)
-    model_dnn = tf.keras.models.load_model(f"/var/task/PROFET_Web_ys/DL_Model/{anchor_name}_{pred_name}_model_dnn")
+    model_dnn = tf.keras.models.load_model(f"/var/task/PROFET_WEB_TEST_YS/DL_Model/{anchor_name}_{pred_name}_model_dnn")
     dnn_pred = model_dnn.predict(test_x).reshape(-1, 1)
     median_pred = np.median(np.stack([dnn_pred, rfr_pred, linear_pred]), axis=0)
 
@@ -39,10 +39,10 @@ def lambda_handler(event, context):
 
     body = (body[: body.rfind('WebKitFormBoundary')])
     ANCHOR_INSTANCE = (body[body.find('anchor_instance')+16: body.rfind('WebKitFormBoundary')])
-    PRED_INSTANCES = [x for x in INSTANCE_LIST if x != anchor_instance] 
+    PRED_INSTANCES = [x for x in INSTANCE_LIST if x != ANCHOR_INSTANCE] 
 
     test_x = pd.DataFrame(json_feature)
-    missing_columns_list = [x for x in feature_info.FEATURE_COLUMNS if x not in df_feature.columns]
+    missing_columns_list = [x for x in feature_info.FEATURE_COLUMNS if x not in test_x.columns]
     for i in missing_columns_list:
         test_x[i] = 0 
     
@@ -53,16 +53,17 @@ def lambda_handler(event, context):
         for feature in value:
             test_x["&".join(value)] += test_x[feature]
         test_x.drop(value, axis=1, inplace=True)
-		for i in pred_instances: 
-            globals()['result_{}'.format(i)] = median_ensemble(test_x, BATCH_LATENCY, ANCHOR_INSTANCE, PRED_INSTANCES)
-		 
-	pred_latency = []
-	pred_instance = []
-    for i in pred_instances:
-        pred_latency.append(globals()['result_{}'.format(i)])
-        pred_instance.append(i)
+    for pred_instance in PRED_INSTANCES: 
+        globals()['result_{}'.format(pred_instance)] = median_ensemble(test_x, BATCH_LATENCY, ANCHOR_INSTANCE, pred_instance)	 
+	
+    result_latency = []
+    result_instance = []
+
+    for pred_instance in PRED_INSTANCES:
+        result_latency.append(globals()['result_{}'.format(pred_instance)])
+        result_instance.append(pred_instance)
              
     return {
         'statusCode': 200,
-        'body': json.dumps(f"{(result_latency[0])[0][0]}&{(result_latency[1])[0][0]}&{(result_latency[2])[0][0]}&{result_instance[0]}&{result_instance[1]}&{result_instance[2]}&")
- }
+        'body': json.dumps(f"{result_latency[0]}&{result_latency[1]}&{result_latency[2]}&{result_instance[0]}&{result_instance[1]}&{result_instance[2]}&")
+    }

@@ -12,7 +12,7 @@ RUN yum install git -y
 # Copy function code to container
 COPY feature_info.py ./
 COPY app.py ./
-RUN git clone https://github.com/hyoonseo159357/PROFET_Web_ys.git
+RUN git clone https://github.com/hyoonseo159357/PROFET_WEB_TEST_YS.git
 
 # setting the CMD to your handler file_name.function_name
 CMD [ "app.lambda_handler" ]
