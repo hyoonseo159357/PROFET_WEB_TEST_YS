@@ -16,7 +16,7 @@ def median_ensemble(test_x, anchor_latency, anchor_instance, pred_instance):
     # Load model & Predict
     model_rfr = pickle.load(open(f'/mnt/efs/packages/{anchor_name}_{pred_name}_model_rfr.bin', 'rb')) 
     rfr_pred = model_rfr.predict(test_x).reshape(-1, 1)
-    model_dnn = tf.keras.models.load_model(f"/mnt/efs/packages/saved_model_dnn_{anchor_name}")
+    model_dnn = tf.keras.models.load_model(f"/mnt/efs/packages/{anchor_name}_{pred_name}_model_dnn.bin")
     dnn_pred = model_dnn.predict(test_x).reshape(-1, 1)
     median_pred = np.median(np.stack([dnn_pred, rfr_pred]), axis=0)
 
