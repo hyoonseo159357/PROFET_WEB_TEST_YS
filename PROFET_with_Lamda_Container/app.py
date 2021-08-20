@@ -52,6 +52,7 @@ def median_ensemble(test_x, anchor_latency, anchor_instance, pred_instance):
 def lambda_handler(event, context):
     # Load Data & Parsing
     body = event['body-json']
+    console.log(body)
     json_feature = json.loads(body[body.find('['): body.rfind(']')+1]) 
     body = body.replace('\n',"")
     body = body.replace('\r',"")
@@ -71,7 +72,7 @@ def lambda_handler(event, context):
     for pred_instance in PRED_INSTANCES: 
         globals()['result_{}'.format(pred_instance)] = median_ensemble(test_x, BATCH_LATENCY, ANCHOR_INSTANCE, pred_instance)	 
 	
-	# Output
+    # Output
     result_latency = []
     result_instance = []
 
