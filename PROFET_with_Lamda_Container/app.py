@@ -52,13 +52,14 @@ def median_ensemble(test_x, anchor_latency, anchor_instance, pred_instance):
 def lambda_handler(event, context):
     # Load Data & Parsing
     body = event['body-json']
-    console.log(body)
+    printbody=body
+
     json_feature = json.loads(body[body.find('['): body.rfind(']')+1]) 
     body = body.replace('\n',"")
     body = body.replace('\r',"")
     body = body.replace('-',"")
  
-    # ANCHOR_INSTANCE, BATCH_LATENCY, PRED_INSTANCES  Declaration
+    # ANCsHOR_INSTANCE, BATCH_LATENCY, PRED_INSTANCES  Declaration
     try:
         BATCH_LATENCY = int(body[body.find('anchor_latency')+15: body.rfind('WebKitFormBoundary')])    
     except:
@@ -83,4 +84,5 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         'body': json.dumps(f"{result_latency[0]}&{result_latency[1]}&{result_latency[2]}&{result_instance[0]}&{result_instance[1]}&{result_instance[2]}&")
+        'event' : printbody
     }
