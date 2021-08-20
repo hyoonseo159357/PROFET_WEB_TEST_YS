@@ -1,6 +1,5 @@
-###### ECR 명령어 실행시 SUDO 추가로 꼭 붙여줘야함
 
-#### 진행순서
+#####  < 진행순서 >
 ##### 1. EC2에 mkdir Profet로 폴더만들기
 ##### 2. start.sh 그대로 세팅
 ##### 3. app.py , requirements.txt , feature_info.py , Dockerfile 만들기
