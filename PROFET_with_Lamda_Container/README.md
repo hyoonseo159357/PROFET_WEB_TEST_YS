@@ -5,5 +5,6 @@
 ##### 3. app.py , requirements.txt , feature_info.py , Dockerfile 만들기
 ##### 4. ECR 에서 리포지토리 생성
 ##### 5. 생성한 리포지토리 들어가서 푸시명령보기 클릭!
-##### 6. 명령어에 SUDO 모두 붙여서 터미널에 입력하기 (맨처음 명령어는 DOCKER 앞에 SUDO 붙이기)
-##### 7. api gateway 배포
+##### 6. 명령어에 SUDO 모두 붙여서 터미널에 입력하기 (맨처음 명령어는 DOCKER 앞에 SUDO 붙이기)\
+##### 7. 람다에서 이미지 선택
+##### 8. api gateway 배포
